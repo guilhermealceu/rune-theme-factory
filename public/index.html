@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RUNE Theme Factory</title>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css" />
+</head>
+
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">⚙️</div>
+        <div class="brand-text">
+          <div class="title">RUNE Theme Factory</div>
+          <div class="sub">gera tema do Chrome + assets da Web Store (tamanhos certos, zip pronto)</div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button id="themeToggle" class="iconBtn" type="button" aria-label="Alternar tema">
+          <span id="themeIcon" aria-hidden="true">🌙</span>
+          <span class="iconBtnText" id="themeLabel">Escuro</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- COLUNA ESQUERDA: FORM -->
+    <section class="card">
+      <div class="cardHead">
+        <h2>Configuração</h2>
+        <p class="muted small">Arraste uma imagem, personalize e gere. O preview simula a Web Store.</p>
+      </div>
+
+      <div class="steps" aria-label="Passo a passo">
+        <div class="step"><span class="dot">1</span><span>Wallpaper</span></div>
+        <div class="step"><span class="dot">2</span><span>Cores</span></div>
+        <div class="step"><span class="dot">3</span><span>Web Store</span><span class="muted tiny">(opcional)</span></div>
+        <div class="step"><span class="dot">4</span><span>Gerar</span></div>
+      </div>
+
+      <div class="grid2">
+        <label class="field">
+          <span>Nome</span>
+          <input id="name" placeholder="Ex: Meu Tema" value="Meu Tema" />
+        </label>
+
+        <label class="field">
+          <span>Versão</span>
+          <input id="version" placeholder="1.0.0" value="1.0.0" />
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Descrição</span>
+        <textarea id="description" placeholder="Opcional..."></textarea>
+      </label>
+
+      <div class="grid2">
+        <label class="field">
+          <span>Layout do tema</span>
+          <select id="presetKey">
+            <option value="classic_16x9">Padrão (recomendado)</option>
+            <option value="vertical">Vertical (arte alta)</option>
+            <option value="horizontal">Horizontal (paisagem)</option>
+          </select>
+          <small class="muted">
+            Define como as imagens serão cortadas para caber no Chrome.
+          </small>
+        </label>
+
+        <div class="field">
+          <span>Imagem background</span>
+
+          <!-- Dropzone sem quebrar: mantém o input #image -->
+          <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="Arraste uma imagem aqui ou clique para selecionar">
+            <input id="image" class="fileInput" type="file" accept="image/*" />
+            <div class="dzInner">
+              <div class="dzIcon" aria-hidden="true">🖼️</div>
+              <div class="dzText">
+                <div class="dzTitle">Arraste e solte aqui</div>
+                <div class="dzSub muted small">ou clique para selecionar (suporta colar com CTRL+V)</div>
+              </div>
+              <div class="dzHint">JPG • PNG • WEBP</div>
+            </div>
+          </div>
+
+          <div class="fileMeta">
+            <span class="muted small">Selecionado:</span>
+            <span id="fileName" class="mono small">—</span>
+          </div>
+        </div>
+      </div>
+
+      <details class="advanced" open>
+        <summary>
+          <span class="sumTitle">Aparência (cores do Chrome)</span>
+          <span class="sumDesc muted">o usuário escolhe as cores</span>
+        </summary>
+
+        <div class="grid2">
+          <label class="field">
+            <span>Modo de cores</span>
+            <select id="colorMode">
+              <option value="auto">Automático (pegar da imagem)</option>
+              <option value="custom">Personalizado</option>
+            </select>
+            <small class="muted">Automático tenta combinar com o wallpaper. Personalizado deixa você escolher.</small>
+          </label>
+
+          <label class="field">
+            <span>Estilo geral</span>
+            <select id="styleMode">
+              <option value="dark">Escuro</option>
+              <option value="light">Claro</option>
+            </select>
+            <small class="muted">Afeta contraste e aparência do topo.</small>
+          </label>
+        </div>
+
+        <div id="customColors" class="grid2" style="display:none;">
+          <label class="field">
+            <span>Frame (topo)</span>
+            <input id="c_frame" type="color" value="#111827" />
+          </label>
+
+          <label class="field">
+            <span>Toolbar</span>
+            <input id="c_toolbar" type="color" value="#0f172a" />
+          </label>
+
+          <label class="field">
+            <span>NTP fundo</span>
+            <input id="c_ntp_bg" type="color" value="#0b0c10" />
+          </label>
+
+          <label class="field">
+            <span>Texto (abas)</span>
+            <input id="c_tab_text" type="color" value="#e5e7eb" />
+          </label>
+
+          <label class="field">
+            <span>Texto (NTP)</span>
+            <input id="c_ntp_text" type="color" value="#e5e7eb" />
+          </label>
+
+          <label class="field">
+            <span>Links (NTP)</span>
+            <input id="c_ntp_link" type="color" value="#8b5cf6" />
+          </label>
+        </div>
+
+        <div class="hintBox" style="margin-top:12px;">
+          <b>Dica:</b> se o tema ficar “apagado”, aumente contraste (topo mais escuro + texto mais claro).
+        </div>
+      </details>
+
+      <details class="advanced">
+        <summary>
+          <span class="sumTitle">Web Store</span>
+          <span class="sumDesc muted">recorte manual + overlay (opcional)</span>
+        </summary>
+
+        <div class="callout">
+          Ajuste as imagens da <b>Web Store</b> (1280×800 / 640×400 / etc) e aplique overlay “janela do Chrome”.
+        </div>
+
+        <div class="grid2">
+          <label class="check">
+            <input id="webManualCrop" type="checkbox" />
+            <span>Ativar recorte manual (Web Store)</span>
+          </label>
+
+          <label class="check">
+            <input id="webOverlayOn" type="checkbox" />
+            <span>Aplicar overlay nas capturas</span>
+          </label>
+        </div>
+
+        <div class="grid2">
+          <label class="field">
+            <span>Tipo de overlay</span>
+            <select id="overlayPreset">
+              <option value="none">Nenhum</option>
+              <option value="generic">Genérico (simula Chrome)</option>
+              <option value="upload">Usar PNG enviado</option>
+            </select>
+            <small class="muted">Se “PNG enviado”, selecione abaixo.</small>
+          </label>
+
+          <label class="field" id="overlayUploadWrap" style="display:none;">
+            <span>Overlay (PNG com transparência)</span>
+            <input id="overlay" type="file" accept="image/png" />
+            <small class="muted">Dica: overlay com “buraco” (transparente) no meio.</small>
+          </label>
+        </div>
+
+        <div class="grid2">
+          <label class="field">
+            <span>Alvo do recorte</span>
+            <select id="cropTarget">
+              <option value="screenshot">Screenshot 1280×800</option>
+              <option value="screenshot_small">Screenshot 640×400</option>
+              <option value="promo_small">Promo 440×280</option>
+              <option value="promo_marquee">Marquee 1400×560</option>
+              <option value="icon">Ícone 128×128</option>
+            </select>
+          </label>
+
+          <div class="hint muted">
+            Ajuste o enquadramento para cada alvo e ele fica salvo. Ao gerar, o servidor usa esses recortes.
+          </div>
+        </div>
+
+        <div id="cropArea" class="cropArea" hidden>
+          <img id="cropImg" alt="preview" />
+        </div>
+      </details>
+
+      <div class="actions">
+        <button id="btnGenerate" class="btnPrimary" type="button">
+          <span class="btnIcon" aria-hidden="true">⚡</span> Gerar
+        </button>
+        <button id="btnSample" class="btnGhost" type="button">Carregar exemplo</button>
+        <button id="btnHelp" class="btnGhost" type="button">Ajuda</button>
+      </div>
+
+      <div id="status" class="status" hidden></div>
+    </section>
+
+    <!-- COLUNA DIREITA: PREVIEW + RESULTADO -->
+    <section class="side">
+      <div class="card sticky">
+        <div class="cardHead">
+          <h2>Preview (Chrome fake)</h2>
+          <p class="muted small">Simula como a captura pode ficar na Web Store (fundo + overlay + luz/sombra).</p>
+        </div>
+
+        <div class="previewTitle">
+          <span class="muted small">Arquivo:</span>
+          <span id="previewMeta" class="mono muted small">—</span>
+        </div>
+
+        <div class="chromeMock" id="chromeMock">
+          <img id="pvBg" class="pvBg" alt="background preview" />
+          <img id="pvOverlay" class="pvOverlay" alt="overlay preview" />
+
+          <div class="chromeTint">
+            <div class="chromeTopBar" id="chromeTopBar"></div>
+          </div>
+
+          <div class="pvVignette"></div>
+          <div class="pvEmpty" id="pvEmpty">
+            <div class="pvEmptyInner">
+              <div class="pvEmptyIcon" aria-hidden="true">🧪</div>
+              <div class="pvEmptyTitle">Solta um wallpaper aqui.</div>
+              <div class="pvEmptySub muted small">A prévia e os recortes vão ficar bem mais previsíveis.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="previewControls">
+          <label class="rangeRow">
+            <span>Overlay</span>
+            <input type="range" id="pvOverlayOpacity" min="0" max="100" value="55">
+            <span id="pvOverlayOpacityVal" class="mono">55%</span>
+          </label>
+
+          <label class="rangeRow">
+            <span>Sombra</span>
+            <input type="range" id="pvShadow" min="0" max="100" value="65">
+            <span id="pvShadowVal" class="mono">65%</span>
+          </label>
+
+          <label class="rangeRow">
+            <span>Brilho</span>
+            <input type="range" id="pvBrightness" min="80" max="120" value="100">
+            <span id="pvBrightnessVal" class="mono">100%</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardHead">
+          <h2>Resultado</h2>
+          <p class="muted small">Os zips aparecem aqui quando a geração termina.</p>
+        </div>
+
+        <div id="result" class="result muted">
+          Gere um tema para aparecer aqui.
+        </div>
+
+        <div class="hintBox">
+          <b>Como testar no Chrome:</b> extraia o <code>theme.zip</code>,
+          vá em <code>chrome://extensions</code> → Modo do desenvolvedor → <i>Carregar sem compactação</i>.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    Feito pra você não sofrer com recortes. 😄
+  </footer>
+
+  <script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
+  <script src="/app.js"></script>
+
+  <!-- Upgrade UX do upload: drag & drop + paste (sem mexer no app.js) -->
+  <script>
+    (function () {
+      const dz = document.getElementById("dropzone");
+      const input = document.getElementById("image");
+      const fileName = document.getElementById("fileName");
+      const pvEmpty = document.getElementById("pvEmpty");
+
+      if (!dz || !input) return;
+
+      function syncName() {
+        const f = input.files && input.files[0];
+        if (fileName) fileName.textContent = f ? f.name : "—";
+        if (pvEmpty) pvEmpty.style.display = f ? "none" : "grid";
+      }
+
+      function setFile(file) {
+        if (!file) return;
+        if (file.type && !file.type.startsWith("image/")) return;
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        input.files = dt.files;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+        syncName();
+      }
+
+      input.addEventListener("change", syncName);
+
+      // Evita reabrir o seletor quando o click ocorre no próprio <input>
+      input.addEventListener("click", (e) => e.stopPropagation());
+syncName();
+
+      ["dragenter", "dragover"].forEach(ev => {
+        dz.addEventListener(ev, (e) => {
+          e.preventDefault();
+          dz.classList.add("isDrag");
+        });
+      });
+
+      ["dragleave", "drop"].forEach(ev => {
+        dz.addEventListener(ev, (e) => {
+          e.preventDefault();
+          dz.classList.remove("isDrag");
+        });
+      });
+
+      dz.addEventListener("drop", (e) => {
+        const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        setFile(file);
+      });
+
+      dz.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          input.click();
+        }
+      });
+
+      document.addEventListener("paste", (e) => {
+        const items = (e.clipboardData && e.clipboardData.items) ? Array.from(e.clipboardData.items) : [];
+        const imgItem = items.find(it => it.type && it.type.startsWith("image/"));
+        if (!imgItem) return;
+        const file = imgItem.getAsFile();
+        setFile(file);
+      });
+    })();
+  </script>
+</body>
+</html>
