@@ -2,7 +2,7 @@
 
 Uma mini “fábrica de temas” que roda na sua máquina para gerar **um tema do Chrome** + **assets da Chrome Web Store** a partir de 1 imagem (ou várias), já com os **tamanhos certinhos** e com **.zip pronto**.
 
-> 📸 _Print da interface_
+![Tela do RUNE Theme Factory com um tema gerado](docs/gerado.png)
 
 ## Sobre
 
